@@ -16,35 +16,45 @@ exports.createUser = async (req: Request, res: Response) => {
         const user = await prisma.user.create({
             data: parsed.data
         });
-        res.status(201).json({message:user});
+        res.status(201).json({ message: user });
     }
     catch (error) {
         console.log(error)
-        res.status(400).send({error})
+        res.status(400).send({ error })
     }
 }
 
 exports.updateUser = async (req: Request, res: Response) => {
-    
-    const userId = req.params.id;
 
-    const updateUserSchema = userSchema.partial();
-    const parsed = updateUserSchema.safeParse(req.body);
-    if (!parsed.success) {
-        return res.status(400).json({ message: "Invalid data" })
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+        return res.status(401).json({ message: "Unauthorized" });
     }
-    if (Object.keys(parsed.data).length === 0) {
-        return res.status(400).json({ message: "No data found to be updated" })
-    }
-
+    const token = authHeader.startsWith("Bearer ") ? authHeader.split(" ")[1] : authHeader;
     try {
-        const updateUser = await prisma.user.update({
-            where: { id: userId },
-            data: parsed.data
-        });
-        res.status(200).json({ message: "User updated successfully", user: updateUser });
+        const decoded = jwt.verify(token, process.env.SECRET_KEY);
+        const userId = decoded.userId;
+
+        const updateUserSchema = userSchema.partial();
+        const parsed = updateUserSchema.safeParse(req.body);
+        if (!parsed.success) {
+            return res.status(400).json({ message: "Invalid data" })
+        }
+        if (Object.keys(parsed.data).length === 0) {
+            return res.status(400).json({ message: "No data found to be updated" })
+        }
+
+        try {
+            const updateUser = await prisma.user.update({
+                where: { id: userId },
+                data: parsed.data
+            });
+            res.status(200).json({ message: "User updated successfully", user: updateUser });
+        } catch (error) {
+            res.status(500).json({ message: "Something went wrong" });
+        }
     } catch (error) {
-        res.status(500).json({ message: "Something went wrong" });
+        res.status(403).json({ message: "forbidden" })
     }
 
 }
@@ -72,6 +82,15 @@ exports.getUserbyId = async (req: Request, res: Response) => {
         res.status(400).json({ message: "Error finding the user" })
     }
 }
-
-
-
+exports.signIn = async (req: Request, res: Response) => {
+    const {email, password} = req.body;
+    const user = await prisma.user.findFirst({
+        where:{
+            email: email
+        }
+    })
+    if(!user || Object.keys(user).length === 0) return res.status(400)
+    if(user.password !== password) {res.status(400).json({msg: "wrong cred"})}
+    const token = jwt.sign({userId: user.id, email: user.email}, process.env.SECRET_KEY);
+    res.status(200).json({token});
+}
