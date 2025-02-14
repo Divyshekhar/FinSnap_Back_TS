@@ -4,7 +4,7 @@ const dotenv = require("dotenv");
 dotenv.config();
 
 interface AuthenticatedRequest extends Request {
-    user?: JwtPayload; // Extend Request to include `user`
+    user: JwtPayload; //Jwtpayload = payload of jwt
 }
 const authenticateJwt = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     const authHeader = req.headers.authorization;

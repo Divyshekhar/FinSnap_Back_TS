@@ -7,7 +7,7 @@ dotenv.config();
 const prisma = new PrismaClient();
 
 interface AuthenticatedRequest extends Request {
-    user?: { userId: string };
+    user: { userId: string };
 }
 
 exports.createUser = async (req: Request, res: Response) => {
