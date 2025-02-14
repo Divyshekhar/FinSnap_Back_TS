@@ -29,37 +29,6 @@ exports.createUser = async (req: Request, res: Response) => {
 }
 
 exports.updateUser = async (req: AuthenticatedRequest, res: Response) => {
-
-    // const authHeader = req.headers.authorization;
-    // if (!authHeader) {
-    //     return res.status(401).json({ message: "Unauthorized" });
-    // }
-    // const token = authHeader.startsWith("Bearer ") ? authHeader.split(" ")[1] : authHeader;
-    // try {
-    //     const decoded = jwt.verify(token, process.env.SECRET_KEY);
-    //     const userId = decoded.userId;
-
-    //     const updateUserSchema = userSchema.partial();
-    //     const parsed = updateUserSchema.safeParse(req.body);
-    //     if (!parsed.success) {
-    //         return res.status(400).json({ message: "Invalid data" })
-    //     }
-    //     if (Object.keys(parsed.data).length === 0) {
-    //         return res.status(400).json({ message: "No data found to be updated" })
-    //     }
-
-    //     try {
-    //         const updateUser = await prisma.user.update({
-    //             where: { id: userId },
-    //             data: parsed.data
-    //         });
-    //         res.status(200).json({ message: "User updated successfully", user: updateUser });
-    //     } catch (error) {
-    //         res.status(500).json({ message: "Something went wrong" });
-    //     }
-    // } catch (error) {
-    //     res.status(403).json({ message: "forbidden" })
-    // }
     if(!req.user || !req.user.userId) return res.status(401).json({message: "Unauthorized"});
     const userId = req.user.userId;
     const updateUserSchema = userSchema.partial();
