@@ -27,7 +27,7 @@ exports.createExpense = async (req: AuthenticatedRequest, res: Response) => {
         return res.status(400).json({ message: "Server Error" });
     }
 }
-
+//remove this in prod
 exports.getAllExpense = async (req: Request, res: Response) => {
     try {
         const expense = await prisma.expense.findMany();

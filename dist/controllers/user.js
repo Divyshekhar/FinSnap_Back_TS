@@ -61,6 +61,7 @@ exports.updateUser = (req, res) => __awaiter(void 0, void 0, void 0, function* (
         res.status(500).json({ message: "Something went wrong" });
     }
 });
+//remove this in prod
 exports.getUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const data = yield prisma.user.findMany();
@@ -70,6 +71,7 @@ exports.getUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         res.status(400).json({ message: "Something went wrong" });
     }
 });
+//remove this in prod
 exports.getUserbyId = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const userId = req.params.id;
     try {

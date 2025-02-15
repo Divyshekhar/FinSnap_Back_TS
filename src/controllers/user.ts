@@ -56,9 +56,8 @@ exports.updateUser = async (req: AuthenticatedRequest, res: Response) => {
         } catch (error) {
             res.status(500).json({ message: "Something went wrong" });
         }
-    
-
 }
+//remove this in prod
 exports.getUser = async (req: Request, res: Response) => {
     try {
         const data = await prisma.user.findMany()
@@ -68,6 +67,7 @@ exports.getUser = async (req: Request, res: Response) => {
         res.status(400).json({ message: "Something went wrong" })
     }
 }
+//remove this in prod
 exports.getUserbyId = async (req: Request, res: Response) => {
     const userId = req.params.id;
     try {
