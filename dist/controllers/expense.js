@@ -13,12 +13,15 @@ const client_1 = require("@prisma/client");
 const expenseValidation_1 = require("./validation/expenseValidation");
 const prisma = new client_1.PrismaClient();
 exports.createExpense = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    if (!req.user || !req.user.userId)
+        return res.status(401).json({ message: "Error Identifying Token" });
+    const userId = req.user.userId;
     const parsed = expenseValidation_1.expenseSchema.safeParse(req.body);
     if (!parsed.success)
         return res.status(400).json({ message: "Invalid inputs" });
     try {
         const expense = yield prisma.expense.create({
-            data: Object.assign(Object.assign({}, parsed.data), { date: new Date() })
+            data: Object.assign(Object.assign({}, parsed.data), { userId: userId, date: new Date() })
         });
         return res.status(200).json({ expense });
     }
@@ -35,11 +38,13 @@ exports.getAllExpense = (req, res) => __awaiter(void 0, void 0, void 0, function
         return res.status(400).json({ message: "Server Error" });
     }
 });
-exports.getExpenseById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const id = req.params.id;
+exports.getAllExpensesByuserId = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    if (!req.user || !req.user.userId)
+        return res.status(401).json({ message: "Error Identifying Token" });
+    const userId = req.user.userId;
     try {
-        const expense = yield prisma.expense.findUnique({
-            where: { id: id }
+        const expense = yield prisma.expense.findMany({
+            where: { id: userId }
         });
         return res.status(200).json({ expense });
     }

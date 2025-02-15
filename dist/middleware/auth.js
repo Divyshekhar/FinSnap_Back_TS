@@ -12,12 +12,12 @@ const authenticateJwt = (req, res, next) => {
         return res.status(401).json({ message: "Unauthorized: No Token" });
     const token = authHeader.startsWith('Bearer ') ? authHeader.split(" ")[1] : authHeader;
     try {
-        const decoded = jsonwebtoken_1.default.verify(token, process.env.SECRET_KEY);
+        const decoded = jsonwebtoken_1.default.verify(token, process.env.SECRET_KEY); //returns the payload part of the token
         req.user = decoded;
         next();
     }
     catch (error) {
-        res.status(400).json({ message: "server error" });
+        res.status(400).json({ message: "Token error" });
     }
 };
 module.exports = authenticateJwt;

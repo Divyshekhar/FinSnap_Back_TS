@@ -5,8 +5,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const router = express_1.default.Router();
+const authenticateJwt = require("../middleware/auth");
 const expenseController = require("../controllers/expense");
 router.post('/add', expenseController.createExpense);
 router.get('/', expenseController.getAllExpense);
-router.get('/:id', expenseController.getExpenseById);
+router.get('/', authenticateJwt, expenseController.getAllExpensesByuserId);
 module.exports = router;

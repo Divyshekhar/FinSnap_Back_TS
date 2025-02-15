@@ -4,13 +4,20 @@ import { expenseSchema } from "./validation/expenseValidation";
 
 const prisma = new PrismaClient();
 
-exports.createExpense = async (req: Request, res: Response) => {
+interface AuthenticatedRequest extends Request{
+    user: {userId: string};
+}
+
+exports.createExpense = async (req: AuthenticatedRequest, res: Response) => {
+    if(!req.user || !req.user.userId) return res.status(401).json({message: "Error Identifying Token"});
+    const userId = req.user.userId;
     const parsed = expenseSchema.safeParse(req.body);
     if (!parsed.success) return res.status(400).json({ message: "Invalid inputs" });
     try {
         const expense = await prisma.expense.create({
             data: {
                 ...parsed.data,
+                userId: userId,
                 date: new Date()
             }
         })
@@ -30,11 +37,12 @@ exports.getAllExpense = async (req: Request, res: Response) => {
         return res.status(400).json({ message: "Server Error" });
     }
 }
-exports.getExpenseById = async (req: Request, res: Response) => {
-    const id = req.params.id;
+exports.getAllExpensesByuserId = async (req: AuthenticatedRequest, res: Response) => {
+    if(!req.user || !req.user.userId) return res.status(401).json({message: "Error Identifying Token"});
+    const userId = req.user.userId;
     try {
-        const expense = await prisma.expense.findUnique({
-            where: { id: id }
+        const expense = await prisma.expense.findMany({
+            where: { id: userId }
         })
         return res.status(200).json({ expense })
     } catch (error) {
