@@ -35,6 +35,13 @@ exports.updateUser = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     if (!req.user || !req.user.userId)
         return res.status(401).json({ message: "Unauthorized" });
     const userId = req.user.userId;
+    const userExists = yield prisma.user.findFirst({
+        where: {
+            id: userId
+        }
+    });
+    if (!userExists)
+        return res.status(403).json({ message: "Forbidden: Invalid User" });
     const updateUserSchema = userValidation_1.userSchema.partial();
     const parsed = updateUserSchema.safeParse(req.body);
     if (!parsed.success) {

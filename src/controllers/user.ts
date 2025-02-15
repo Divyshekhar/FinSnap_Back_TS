@@ -31,6 +31,13 @@ exports.createUser = async (req: Request, res: Response) => {
 exports.updateUser = async (req: AuthenticatedRequest, res: Response) => {
     if(!req.user || !req.user.userId) return res.status(401).json({message: "Unauthorized"});
     const userId = req.user.userId;
+    const userExists = await prisma.user.findFirst({
+            where: {
+                id: userId
+            } 
+        }
+    )
+    if(!userExists) return res.status(403).json({message: "Forbidden: Invalid User"})
     const updateUserSchema = userSchema.partial();
         const parsed = updateUserSchema.safeParse(req.body);
         if (!parsed.success) {
