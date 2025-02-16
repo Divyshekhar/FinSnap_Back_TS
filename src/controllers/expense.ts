@@ -11,6 +11,7 @@ interface AuthenticatedRequest extends Request {
 exports.createExpense = async (req: AuthenticatedRequest, res: Response) => {
     if (!req.user || !req.user.userId) return res.status(401).json({ message: "Error Identifying Token" });
     const userId = req.user.userId;
+    //add user.userId validation
     const parsed = expenseSchema.safeParse(req.body);
     if (!parsed.success) return res.status(400).json({ message: "Invalid inputs" });
     try {
@@ -33,7 +34,7 @@ exports.getAllExpense = async (req: Request, res: Response) => {
         const expense = await prisma.expense.findMany();
         return res.status(200).json({ expense })
     }
-    catch (error) {
+    catch (error) { 
         return res.status(400).json({ message: "Server Error" });
     }
 }
@@ -42,7 +43,7 @@ exports.getAllExpensesByuserId = async (req: AuthenticatedRequest, res: Response
     const userId = req.user.userId;
     try {
         const expense = await prisma.expense.findMany({
-            where: { id: userId }
+            where: { userId: userId }
         })
         return res.status(200).json({ expense })
     } catch (error) {
