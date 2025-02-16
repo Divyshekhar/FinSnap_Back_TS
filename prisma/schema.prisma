@@ -51,4 +51,3 @@ model Income {
   userId      String     
   user        User    @relation("UserIncomes", fields: [userId], references: [id])
 }
-

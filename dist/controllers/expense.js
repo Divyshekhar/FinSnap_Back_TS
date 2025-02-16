@@ -16,7 +16,13 @@ exports.createExpense = (req, res) => __awaiter(void 0, void 0, void 0, function
     if (!req.user || !req.user.userId)
         return res.status(401).json({ message: "Error Identifying Token" });
     const userId = req.user.userId;
-    //add user.userId validation
+    const isValid = yield prisma.user.findFirst({
+        where: {
+            id: userId
+        }
+    });
+    if (!isValid)
+        return res.status(400).json({ message: "Error: Invalid User" });
     const parsed = expenseValidation_1.expenseSchema.safeParse(req.body);
     if (!parsed.success)
         return res.status(400).json({ message: "Invalid inputs" });

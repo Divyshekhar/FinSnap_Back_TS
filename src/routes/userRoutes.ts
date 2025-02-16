@@ -8,5 +8,4 @@ router.put('/update', authenticateJwt,userController.updateUser);
 router.get('/', userController.getUser);
 router.get('/:id', userController.getUserbyId);
 router.post('/signin', userController.signIn);
-
 module.exports = router;
