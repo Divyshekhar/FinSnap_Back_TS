@@ -115,3 +115,24 @@ exports.deleteExpense = (req, res) => __awaiter(void 0, void 0, void 0, function
         res.status(400).json({ message: "Server Error" });
     }
 });
+exports.calculateTotal = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    if (!req.user || !req.user.userId)
+        return res.status(401).json({ message: "Error Identifying Token" });
+    const userId = req.user.userId;
+    const isValid = yield prisma.user.findFirst({
+        where: { id: userId }
+    });
+    if (!isValid)
+        return res.status(400).json({ message: "Error: Invalid User" });
+    try {
+        const total = yield prisma.expense.aggregate({
+            where: { userId: userId },
+            _sum: { amount: true }
+        });
+        return res.status(200).json({ total: total._sum.amount || 0 });
+    }
+    catch (error) {
+        res.status(400).json({ message: "Error Calculating the total expense" });
+    }
+    ;
+});
