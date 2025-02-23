@@ -94,10 +94,9 @@ exports.signIn = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         }
     });
     if (!user || Object.keys(user).length === 0)
-        return res.status(400);
-    if (user.password !== password) {
-        res.status(400).json({ msg: "wrong cred" });
-    }
-    const token = jwt.sign({ userId: user.id, email: user.email }, process.env.SECRET_KEY);
+        return res.status(400).json({ message: "error finding the user" });
+    if (user.password !== password)
+        return res.status(400).json({ msg: "wrong cred" });
+    const token = jwt.sign({ userId: user.id, email: user.email }, process.env.SECRET_KEY, { expiresIn: "24h" });
     res.status(200).json({ token });
 });
