@@ -71,19 +71,22 @@ exports.getUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         res.status(400).json({ message: "Something went wrong" });
     }
 });
-//remove this in prod
 exports.getUserbyId = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const userId = req.params.id;
+    if (!req.user || !req.user.userId)
+        return res.status(401).json({ message: "Unauthorized" });
+    const userId = req.user.userId;
     try {
         const user = yield prisma.user.findFirst({
             where: {
                 id: userId
             }
         });
-        res.status(200).json({ user });
+        if (!user)
+            return res.status(403).json({ message: "Forbidden: Invalid User" });
+        return res.status(200).json({ user });
     }
     catch (e) {
-        res.status(400).json({ message: "Error finding the user" });
+        res.status(400).json({ message: "Error" });
     }
 });
 exports.signIn = (req, res) => __awaiter(void 0, void 0, void 0, function* () {

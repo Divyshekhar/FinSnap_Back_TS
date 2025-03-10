@@ -46,30 +46,27 @@ exports.getAllIncome = (req, res) => __awaiter(void 0, void 0, void 0, function*
         return res.status(400).json({ message: "Server Error" });
     }
 });
-exports.getAllIncomeById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    if (!req.user || !req.user.userId)
-        return res.status(401).json({ message: "Error Identifying Token" });
-    const userId = req.user.userId;
-    const isValid = yield prisma.user.findFirst({
-        where: {
-            id: userId
-        }
-    });
-    if (!isValid)
-        return res.status(400).json({ message: "Forbidden: User not found" });
-    try {
-        const income = yield prisma.income.findMany({
-            where: { id: userId }
-        });
-        return res.status(200).json({ income });
-    }
-    catch (error) {
-        return res.status(400).json({ message: "Server Error" });
-    }
-});
+// exports.getAllIncomeById = async (req: AuthenticatedRequest, res: Response) => {
+//     if(!req.user || !req.user.userId) return res.status(401).json({message: "Error Identifying Token"});
+//     const userId = req.user.userId;
+//     const isValid = await prisma.user.findFirst({
+//         where:{
+//             id: userId
+//         }
+//     })
+//     if(!isValid) return res.status(400).json({message: "Forbidden: User not found"});
+//     try {
+//         const income = await prisma.income.findMany({
+//             where: { id: userId }
+//         })
+//         return res.status(200).json({ income })
+//     } catch (error) {
+//         return res.status(400).json({ message: "Server Error" })
+//     }
+// }
 exports.updateIncome = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     if (!req.user || !req.user.userId)
-        return res.status(401).json({ message: "Error Identifying Token" });
+        return res.status(401).json({ message: "Error Idenasdasdtifying Token" });
     const userId = req.user.userId;
     const incomeId = req.params.id;
     const isValid = yield prisma.user.findFirst({
@@ -102,7 +99,7 @@ exports.updateIncome = (req, res) => __awaiter(void 0, void 0, void 0, function*
 });
 exports.deleteIncome = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     if (!req.user || !req.user.userId)
-        return res.status(401).json({ message: "Error Identifying Token" });
+        return res.status(401).json({ message: "Error Ideasdsadntifying Token" });
     const userId = req.user.userId;
     const incomeId = req.params.id;
     const isValid = yield prisma.user.findFirst({
@@ -124,15 +121,13 @@ exports.deleteIncome = (req, res) => __awaiter(void 0, void 0, void 0, function*
 });
 exports.calculateTotal = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     if (!req.user || !req.user.userId)
-        return res.status(401).json({ message: "Error Identifying Token" });
+        res.status(401).json({ message: "Error: Identifying Tokeasjdhbasjdbn" });
     const userId = req.user.userId;
     const isValid = yield prisma.user.findFirst({
-        where: {
-            id: userId
-        }
+        where: { id: userId }
     });
     if (!isValid)
-        return res.status(400).json({ message: "Forbidden: User not found" });
+        return res.status(400).json({ message: "Error: Invalid User" });
     try {
         const total = yield prisma.income.aggregate({
             where: { userId: userId },
@@ -141,6 +136,7 @@ exports.calculateTotal = (req, res) => __awaiter(void 0, void 0, void 0, functio
         return res.status(200).json({ total: total._sum.amount || 0 });
     }
     catch (error) {
-        res.status(400).json({ message: "Error calculating total" });
+        res.status(400).json({ message: "Error Calculating the total expense" });
     }
+    ;
 });
