@@ -5,6 +5,5 @@ export const expenseSchema = z.object({
         description: z.string(),
         category: z.string(),
         date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
-        userId: z.string(),
         title: z.string()
 })

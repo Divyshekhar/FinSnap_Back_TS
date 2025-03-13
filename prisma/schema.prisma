@@ -26,7 +26,7 @@ model Expense {
   id          String   @id @default(uuid())
   title       String
   amount      Float
-  type        String   @default("income")
+  type        String   @default("expense")
   date        DateTime
   category    String
   description String

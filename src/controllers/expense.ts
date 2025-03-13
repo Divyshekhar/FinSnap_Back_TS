@@ -12,11 +12,11 @@ exports.createExpense = async (req: AuthenticatedRequest, res: Response) => {
     if (!req.user || !req.user.userId) return res.status(401).json({ message: "Error Identifying Token" });
     const userId = req.user.userId;
     const isValid = await prisma.user.findFirst({
-        where:{
+        where: {
             id: userId
         }
     })
-    if(!isValid) return res.status(400).json({message: "Error: Invalid User"});
+    if (!isValid) return res.status(400).json({ message: "Error: Invalid User" });
     const parsed = expenseSchema.safeParse(req.body);
     if (!parsed.success) return res.status(400).json({ message: "Invalid inputs" });
     try {
@@ -24,22 +24,43 @@ exports.createExpense = async (req: AuthenticatedRequest, res: Response) => {
             data: {
                 ...parsed.data,
                 userId: userId,
-                date: new Date()
+                date: parsed.data.date ? new Date(parsed.data.date) : new Date()
             }
         })
-        return res.status(200).json({ expense })
+        return res.status(200).json({ expenseCreate: expense })
     }
     catch (error) {
-        return res.status(400).json({ message: "Server Error" });
+        return res.status(400).json({ message: "Server Error", error });
     }
 }
+exports.expenseCategory = async (req: AuthenticatedRequest, res: Response) => {
+    if (!req.user || !req.user.userId) return res.status(401).json({ message: "Error Identifying Token" })
+    const userId = req.user.userId;
+    const isValid = await prisma.user.findFirst({
+        where: { id: userId }
+    })
+    try {
+        if (!isValid) return res.status(401).json({ message: "Invalid Token" })
+        const expenseCategory = await prisma.expense.groupBy({
+            by: ["category"],
+            where: { userId: userId },
+            _sum: { amount: true }
+        })
+        res.status(200).json(expenseCategory)
+    }
+    catch (error) {
+        res.status(400).json({ message: "Server Error" })
+    }
+}
+
+
 //remove this in prod
 exports.getAllExpense = async (req: Request, res: Response) => {
     try {
         const expense = await prisma.expense.findMany();
         return res.status(200).json({ expense })
     }
-    catch (error) { 
+    catch (error) {
         return res.status(400).json({ message: "Server Error" });
     }
 }
@@ -81,15 +102,15 @@ exports.updateExpense = async (req: AuthenticatedRequest, res: Response) => {
             },
             data: parsed.data
         })
-        res.status(200).json({message: "Expense Updated Successfully", updateExpense});
+        res.status(200).json({ message: "Expense Updated Successfully", updateExpense });
 
     }
-    catch(error){
-        res.status(400).json({message: "Server Error"})
+    catch (error) {
+        res.status(400).json({ message: "Server Error" })
     }
 }
 exports.deleteExpense = async (req: AuthenticatedRequest, res: Response) => {
-    if(!req.user || !req.user.userId) return res.status(401).json({message: "Error Identifying Token"});
+    if (!req.user || !req.user.userId) return res.status(401).json({ message: "Error Identifying Token" });
     const userId = req.user.userId;
     const expenseId = req.params.id;
 
@@ -100,34 +121,34 @@ exports.deleteExpense = async (req: AuthenticatedRequest, res: Response) => {
     if (!userExists) {
         return res.status(403).json({ message: "Forbidden: Invalid user" });
     }
-    try{
+    try {
         const deletedExpense = await prisma.expense.delete({
-                where: {
-                    id: expenseId
-                }
+            where: {
+                id: expenseId
             }
+        }
         )
-        res.status(200).json({message: "Successfully Deleted", deletedExpense});
+        res.status(200).json({ message: "Successfully Deleted", deletedExpense });
     }
-    catch(error){
-        res.status(400).json({message: "Server Error"});
-    }    
+    catch (error) {
+        res.status(400).json({ message: "Server Error" });
+    }
 }
-exports.calculateTotal = async(req: AuthenticatedRequest, res: Response) => {
-    if(!req.user || !req.user.userId) return res.status(401).json({message: "Error Identifying Token"});
+exports.calculateTotal = async (req: AuthenticatedRequest, res: Response) => {
+    if (!req.user || !req.user.userId) return res.status(401).json({ message: "Error Identifying Token" });
     const userId = req.user.userId;
     const isValid = await prisma.user.findFirst({
-        where:{id: userId}
+        where: { id: userId }
     })
-    if(!isValid) return res.status(400).json({message: "Error: Invalid User"});
-    try{
+    if (!isValid) return res.status(400).json({ message: "Error: Invalid User" });
+    try {
         const total = await prisma.expense.aggregate({
-            where: {userId: userId},
-            _sum:{amount: true}
+            where: { userId: userId },
+            _sum: { amount: true }
         })
-        return res.status(200).json({total: total._sum.amount || 0});
+        return res.status(200).json({ total: total._sum.amount || 0 });
     }
-    catch(error){
-        res.status(400).json({message: "Error Calculating the total expense"});
+    catch (error) {
+        res.status(400).json({ message: "Error Calculating the total expense" });
     };
 }

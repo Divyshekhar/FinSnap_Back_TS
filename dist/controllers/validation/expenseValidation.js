@@ -7,6 +7,5 @@ exports.expenseSchema = zod_1.z.object({
     description: zod_1.z.string(),
     category: zod_1.z.string(),
     date: zod_1.z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
-    userId: zod_1.z.string(),
     title: zod_1.z.string()
 });

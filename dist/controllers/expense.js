@@ -28,12 +28,33 @@ exports.createExpense = (req, res) => __awaiter(void 0, void 0, void 0, function
         return res.status(400).json({ message: "Invalid inputs" });
     try {
         const expense = yield prisma.expense.create({
-            data: Object.assign(Object.assign({}, parsed.data), { userId: userId, date: new Date() })
+            data: Object.assign(Object.assign({}, parsed.data), { userId: userId, date: parsed.data.date ? new Date(parsed.data.date) : new Date() })
         });
-        return res.status(200).json({ expense });
+        return res.status(200).json({ expenseCreate: expense });
     }
     catch (error) {
-        return res.status(400).json({ message: "Server Error" });
+        return res.status(400).json({ message: "Server Error", error });
+    }
+});
+exports.expenseCategory = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    if (!req.user || !req.user.userId)
+        return res.status(401).json({ message: "Error Identifying Token" });
+    const userId = req.user.userId;
+    const isValid = yield prisma.user.findFirst({
+        where: { id: userId }
+    });
+    try {
+        if (!isValid)
+            return res.status(401).json({ message: "Invalid Token" });
+        const expenseCategory = yield prisma.expense.groupBy({
+            by: ["category"],
+            where: { userId: userId },
+            _sum: { amount: true }
+        });
+        res.status(200).json(expenseCategory);
+    }
+    catch (error) {
+        res.status(400).json({ message: "Server Error" });
     }
 });
 //remove this in prod

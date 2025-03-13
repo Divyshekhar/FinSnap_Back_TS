@@ -9,6 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.incomeCategory = void 0;
 const client_1 = require("@prisma/client");
 const incomeValidation_1 = require("./validation/incomeValidation");
 const prisma = new client_1.PrismaClient();
@@ -28,7 +29,7 @@ exports.createIncome = (req, res) => __awaiter(void 0, void 0, void 0, function*
         return res.status(400).json({ message: "Invalid inputs" });
     try {
         const income = yield prisma.income.create({
-            data: Object.assign(Object.assign({}, parsed.data), { date: new Date() })
+            data: Object.assign(Object.assign({}, parsed.data), { userId: userId, date: parsed.data.date ? new Date(parsed.data.date) : new Date() })
         });
         return res.status(200).json({ message: "Income Created", income });
     }
@@ -46,27 +47,35 @@ exports.getAllIncome = (req, res) => __awaiter(void 0, void 0, void 0, function*
         return res.status(400).json({ message: "Server Error" });
     }
 });
-// exports.getAllIncomeById = async (req: AuthenticatedRequest, res: Response) => {
-//     if(!req.user || !req.user.userId) return res.status(401).json({message: "Error Identifying Token"});
-//     const userId = req.user.userId;
-//     const isValid = await prisma.user.findFirst({
-//         where:{
-//             id: userId
-//         }
-//     })
-//     if(!isValid) return res.status(400).json({message: "Forbidden: User not found"});
-//     try {
-//         const income = await prisma.income.findMany({
-//             where: { id: userId }
-//         })
-//         return res.status(200).json({ income })
-//     } catch (error) {
-//         return res.status(400).json({ message: "Server Error" })
-//     }
-// }
+const incomeCategory = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    if (!req.user || !req.user.userId) {
+        return res.status(401).json({ message: "Error Identifying Token" });
+    }
+    const userId = req.user.userId;
+    try {
+        const isValid = yield prisma.user.findFirst({
+            where: { id: userId }
+        });
+        if (!isValid) {
+            return res.status(400).json({ message: "Forbidden: User not found" });
+        }
+        // Aggregate income by category
+        const incomeByCategory = yield prisma.income.groupBy({
+            by: ["category"],
+            where: { userId: userId },
+            _sum: { amount: true }
+        });
+        return res.status(200).json(incomeByCategory);
+    }
+    catch (error) {
+        console.error("Error fetching income data:", error);
+        return res.status(500).json({ message: "Server Error" });
+    }
+});
+exports.incomeCategory = incomeCategory;
 exports.updateIncome = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     if (!req.user || !req.user.userId)
-        return res.status(401).json({ message: "Error Idenasdasdtifying Token" });
+        return res.status(401).json({ message: "Error Identifying Token" });
     const userId = req.user.userId;
     const incomeId = req.params.id;
     const isValid = yield prisma.user.findFirst({
