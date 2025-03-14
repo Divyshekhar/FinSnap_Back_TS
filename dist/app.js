@@ -9,6 +9,7 @@ const userRoutes = require('./routes/userRoutes');
 const incomeRoutes = require('./routes/incomeRoutes');
 const cors = require('cors');
 const app = (0, express_1.default)();
+const PORT = process.env.PORT || 5000;
 app.use(express_1.default.json());
 app.use(cors());
 app.get('/health', (req, res) => {
@@ -19,6 +20,6 @@ app.get('/health', (req, res) => {
 app.use('/expense', expenseRoutes);
 app.use('/user', userRoutes);
 app.use('/income', incomeRoutes);
-app.listen(5000, () => {
+app.listen(PORT || 5000, () => {
     console.log("Server is running on PORT : 5000");
 });
