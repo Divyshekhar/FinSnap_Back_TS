@@ -20,7 +20,9 @@ exports.createUser = async (req: Request, res: Response) => {
         const user = await prisma.user.create({
             data: parsed.data
         });
-        res.status(201).json({ message: user });
+        const token = jwt.sign({ userId: user.id, email: user.email }, process.env.SECRET_KEY, { expiresIn: "24h" });
+
+        res.status(201).json({ token: token });
     }
     catch (error) {
         console.log(error)

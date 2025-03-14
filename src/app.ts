@@ -19,5 +19,5 @@ app.use('/income', incomeRoutes);
 
 
 app.listen(PORT || 5000, () => {
-    console.log("Server is running on PORT : 5000");
+    console.log(`Server is running on PORT : ${PORT}`);
 })
