@@ -24,7 +24,7 @@ exports.createUser = (req, res) => __awaiter(void 0, void 0, void 0, function* (
         const user = yield prisma.user.create({
             data: parsed.data
         });
-        const token = jwt.sign({ userId: user.id, email: user.email }, process.env.SECRET_KEY, { expiresIn: "24h" });
+        const token = jwt.sign({ name: user.name, userId: user.id, email: user.email }, process.env.SECRET_KEY, { expiresIn: "24h" });
         res.status(201).json({ token: token });
     }
     catch (error) {
@@ -101,6 +101,6 @@ exports.signIn = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         return res.status(400).json({ message: "error finding the user" });
     if (user.password !== password)
         return res.status(400).json({ msg: "wrong cred" });
-    const token = jwt.sign({ userId: user.id, email: user.email }, process.env.SECRET_KEY, { expiresIn: "24h" });
+    const token = jwt.sign({ name: user.name, userId: user.id, email: user.email }, process.env.SECRET_KEY, { expiresIn: "24h" });
     res.status(200).json({ token });
 });
