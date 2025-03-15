@@ -152,3 +152,23 @@ exports.calculateTotal = async (req: AuthenticatedRequest, res: Response) => {
         res.status(400).json({ message: "Error Calculating the total expense" });
     };
 }
+exports.getExpenseHistory = async (req: AuthenticatedRequest, res: Response) => {
+    if (!req.user || !req.user.userId) res.status(401).json({ message: "Error: Identifying Token" });
+    const userId = req.user.userId;
+    const category = req.params.category;
+    const isValid = await prisma.user.findFirst({
+        where: { id: userId }
+    })
+    if (!isValid) return res.status(400).json({ message: "Error: Invalid User" });
+    try {
+        const expenses = await prisma.expense.findMany({
+            select: { title: true, amount: true, date: true },
+            where: { userId: userId, category: category },
+            orderBy: { createdAt: "desc" }
+
+        })
+        res.status(200).json(expenses);
+    } catch (error) {
+        res.status(400).json({ message: "Error occured" });
+    }
+}

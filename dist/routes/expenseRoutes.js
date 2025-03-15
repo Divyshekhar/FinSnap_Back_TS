@@ -15,4 +15,5 @@ router.get('/category', authenticateJwt, expenseController.expenseCategory);
 router.put('/:id', authenticateJwt, expenseController.updateExpense);
 router.delete('/:id', authenticateJwt, expenseController.deleteExpense);
 router.get('/total-expense', authenticateJwt, expenseController.calculateTotal);
+router.get('/history/:category', authenticateJwt, expenseController.getExpenseHistory);
 module.exports = router;

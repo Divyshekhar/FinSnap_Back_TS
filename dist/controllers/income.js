@@ -149,3 +149,25 @@ exports.calculateTotal = (req, res) => __awaiter(void 0, void 0, void 0, functio
     }
     ;
 });
+exports.getIncomeHistory = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    if (!req.user || !req.user.userId)
+        res.status(401).json({ message: "Error: Identifying Tokeasjdhbasjdbn" });
+    const userId = req.user.userId;
+    const category = req.params.category;
+    const isValid = yield prisma.user.findFirst({
+        where: { id: userId }
+    });
+    if (!isValid)
+        return res.status(400).json({ message: "Error: Invalid User" });
+    try {
+        const incomes = yield prisma.income.findMany({
+            select: { title: true, amount: true, date: true, },
+            where: { userId: userId, category: category },
+            orderBy: { createdAt: "desc" }
+        });
+        res.status(200).json(incomes);
+    }
+    catch (error) {
+        res.status(400).json({ message: "Error occured" });
+    }
+});

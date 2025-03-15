@@ -157,3 +157,25 @@ exports.calculateTotal = (req, res) => __awaiter(void 0, void 0, void 0, functio
     }
     ;
 });
+exports.getExpenseHistory = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    if (!req.user || !req.user.userId)
+        res.status(401).json({ message: "Error: Identifying Token" });
+    const userId = req.user.userId;
+    const category = req.params.category;
+    const isValid = yield prisma.user.findFirst({
+        where: { id: userId }
+    });
+    if (!isValid)
+        return res.status(400).json({ message: "Error: Invalid User" });
+    try {
+        const expenses = yield prisma.expense.findMany({
+            select: { title: true, amount: true, date: true },
+            where: { userId: userId, category: category },
+            orderBy: { createdAt: "desc" }
+        });
+        res.status(200).json(expenses);
+    }
+    catch (error) {
+        res.status(400).json({ message: "Error occured" });
+    }
+});
