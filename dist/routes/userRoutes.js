@@ -13,4 +13,5 @@ router.get('/', userController.getUser);
 router.get('/info', authenticateJwt, userController.getUserbyId);
 router.post('/signin', userController.signIn);
 router.post('/logout', authenticateJwt, userController.logout);
+router.get('/token', userController.getToken);
 module.exports = router;
