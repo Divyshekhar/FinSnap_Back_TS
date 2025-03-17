@@ -102,5 +102,13 @@ exports.signIn = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     if (user.password !== password)
         return res.status(400).json({ msg: "wrong cred" });
     const token = jwt.sign({ name: user.name, userId: user.id, email: user.email }, process.env.SECRET_KEY, { expiresIn: "24h" });
-    res.status(200).json({ token });
+    res.cookie("token", token, {
+        httpOnly: false,
+        maxAge: 24 * 60 * 60 * 1000, // 1 day
+    });
+    res.json({ message: "login successful" });
+});
+exports.logout = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    res.clearCookie("token");
+    res.status(200).json({ message: "Logged Successfully" });
 });

@@ -97,5 +97,13 @@ exports.signIn = async (req: Request, res: Response) => {
     if (!user || Object.keys(user).length === 0) return res.status(400).json({ message: "error finding the user" })
     if (user.password !== password) return res.status(400).json({ msg: "wrong cred" })
     const token = jwt.sign({ name: user.name, userId: user.id, email: user.email }, process.env.SECRET_KEY, { expiresIn: "24h" });
-    res.status(200).json({ token });
+    res.cookie("token", token, {
+        httpOnly: false,
+        maxAge: 24 * 60 * 60 * 1000, // 1 day
+    });
+    res.json({message: "login successful"})
+}
+exports.logout = async (req: Request, res: Response) => {
+    res.clearCookie("token");
+    res.status(200).json({message: "Logged Successfully"});
 }
