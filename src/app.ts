@@ -9,8 +9,8 @@ const PORT = process.env.PORT || 5000;
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({
-    credentials: true,
-    origin: "https://finsnap.vercel.app/"
+    origin: "https://finsnap.vercel.app",
+    credentials: true
 }));
 
 

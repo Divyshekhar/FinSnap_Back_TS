@@ -14,8 +14,8 @@ const PORT = process.env.PORT || 5000;
 app.use(express_1.default.json());
 app.use(cookieParser());
 app.use(cors({
-    credentials: true,
-    origin: "https://finsnap.vercel.app/"
+    origin: "https://finsnap.vercel.app",
+    credentials: true
 }));
 app.get('/health', (req, res) => {
     res.status(200).json({
