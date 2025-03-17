@@ -25,9 +25,6 @@ app.get('/health', (req, res) => {
 app.use('/expense', expenseRoutes);
 app.use('/user', userRoutes);
 app.use('/income', incomeRoutes);
-app.get('/cookie', (req, res) => {
-    res.cookie('name', 'GeeksForGeeks').send('Cookie-Parser');
-});
 app.listen(PORT || 5000, () => {
     console.log(`Server is running on PORT : ${PORT}`);
 });

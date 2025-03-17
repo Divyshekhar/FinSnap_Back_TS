@@ -110,5 +110,5 @@ exports.signIn = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 });
 exports.logout = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     res.clearCookie("token");
-    res.status(200).json({ message: "Logged Successfully" });
+    res.status(200).json({ message: "Logged out Successfully" });
 });
