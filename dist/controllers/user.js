@@ -102,21 +102,5 @@ exports.signIn = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     if (user.password !== password)
         return res.status(400).json({ msg: "wrong cred" });
     const token = jwt.sign({ name: user.name, userId: user.id, email: user.email }, process.env.SECRET_KEY, { expiresIn: "24h" });
-    res.cookie("token", token, {
-        httpOnly: true,
-        secure: true,
-        sameSite: "none",
-        maxAge: 24 * 60 * 60 * 1000, // 1 day
-    });
-    res.json({ message: "login successful" });
-});
-exports.logout = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    res.clearCookie("token");
-    res.status(200).json({ message: "Logged out Successfully" });
-});
-exports.getToken = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const token = req.cookies.token;
-    if (!token)
-        return res.status(401).json({ message: "No token found" });
-    res.json({ token });
+    res.status(200).json({ token });
 });

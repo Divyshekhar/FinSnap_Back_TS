@@ -2,17 +2,11 @@ import express from 'express';
 const expenseRoutes = require ('./routes/expenseRoutes');
 const userRoutes = require ('./routes/userRoutes');
 const incomeRoutes = require('./routes/incomeRoutes');
-const cookieParser = require('cookie-parser')
 const cors = require('cors')
 const app = express();
 const PORT = process.env.PORT || 5000;
 app.use(express.json());
-app.use(cookieParser());
-app.use(cors({
-    origin: "http://localhost:3000",
-    credentials: true
-}));
-
+app.use(cors());
 
 app.get('/health', (req, res) => {
     res.status(200).json({
@@ -22,6 +16,7 @@ app.get('/health', (req, res) => {
 app.use('/expense', expenseRoutes)
 app.use('/user', userRoutes);
 app.use('/income', incomeRoutes);
+
 
 app.listen(PORT || 5000, () => {
     console.log(`Server is running on PORT : ${PORT}`);

@@ -97,21 +97,5 @@ exports.signIn = async (req: Request, res: Response) => {
     if (!user || Object.keys(user).length === 0) return res.status(400).json({ message: "error finding the user" })
     if (user.password !== password) return res.status(400).json({ msg: "wrong cred" })
     const token = jwt.sign({ name: user.name, userId: user.id, email: user.email }, process.env.SECRET_KEY, { expiresIn: "24h" });
-    res.cookie("token", token, {
-        httpOnly: true,
-        secure: true,
-        sameSite: "none",
-        maxAge: 24 * 60 * 60 * 1000, // 1 day
-    });
-    res.json({message: "login successful"})
+    res.status(200).json({ token });
 }
-
-exports.logout = async (req: AuthenticatedRequest, res: Response) => {
-    res.clearCookie("token");
-    res.status(200).json({message: "Logged out Successfully"});
-}
-exports.getToken = async (req: Request, res: Response) => {
-    const token = req.cookies.token;
-    if (!token) return res.status(401).json({ message: "No token found" });
-    res.json({ token });
-};

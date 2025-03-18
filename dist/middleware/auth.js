@@ -7,13 +7,12 @@ const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const dotenv = require("dotenv");
 dotenv.config();
 const authenticateJwt = (req, res, next) => {
-    var _a;
-    const authHeader = (_a = req.cookies) === null || _a === void 0 ? void 0 : _a.token;
+    const authHeader = req.headers.authorization;
     if (!authHeader)
         return res.status(401).json({ message: "Unauthorized: No Token" });
     const token = authHeader.startsWith('Bearer ') ? authHeader.split(" ")[1] : authHeader;
     try {
-        const decoded = jsonwebtoken_1.default.verify(token, process.env.SECRET_KEY);
+        const decoded = jsonwebtoken_1.default.verify(token, process.env.SECRET_KEY); //returns the payload part of the token
         req.user = decoded;
         next();
     }
