@@ -156,13 +156,13 @@ exports.getIncomeHistory = async (req: AuthenticatedRequest, res: Response) => {
     if (!isValid) return res.status(400).json({ message: "Error: Invalid User" });
     try {
         const incomes = await prisma.income.findMany({
-            select: {title: true, amount: true, date: true, },
+            select: { title: true, amount: true, date: true, id: true },
             where: { userId: userId, category: category },
-            orderBy: {createdAt: "desc"}
+            orderBy: { createdAt: "desc" }
 
         })
         res.status(200).json(incomes);
     } catch (error) {
-        res.status(400).json({message: "Error occured"});
+        res.status(400).json({ message: "Error occured" });
     }
 }

@@ -161,7 +161,7 @@ exports.getIncomeHistory = (req, res) => __awaiter(void 0, void 0, void 0, funct
         return res.status(400).json({ message: "Error: Invalid User" });
     try {
         const incomes = yield prisma.income.findMany({
-            select: { title: true, amount: true, date: true, },
+            select: { title: true, amount: true, date: true, id: true },
             where: { userId: userId, category: category },
             orderBy: { createdAt: "desc" }
         });

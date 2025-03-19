@@ -162,7 +162,7 @@ exports.getExpenseHistory = async (req: AuthenticatedRequest, res: Response) => 
     if (!isValid) return res.status(400).json({ message: "Error: Invalid User" });
     try {
         const expenses = await prisma.expense.findMany({
-            select: { title: true, amount: true, date: true },
+            select: { title: true, amount: true, date: true, id: true },
             where: { userId: userId, category: category },
             orderBy: { createdAt: "desc" }
 

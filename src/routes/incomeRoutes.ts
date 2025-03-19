@@ -7,7 +7,7 @@ router.get('/', incomeController.getAllIncome);
 router.post('/create', authenticateJwt, incomeController.createIncome);
 router.get('/category', authenticateJwt, incomeController.incomeCategory);
 router.put('/:id', authenticateJwt, incomeController.updateIncome);
-router.delete('/:id', authenticateJwt, incomeController.deleteIncome);
+router.delete('/delete/:id', authenticateJwt, incomeController.deleteIncome);
 router.get('/total-income', authenticateJwt, incomeController.calculateTotal);
 router.get('/history/:category', authenticateJwt, incomeController.getIncomeHistory);
 module.exports = router;
