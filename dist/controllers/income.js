@@ -74,9 +74,6 @@ const incomeCategory = (req, res) => __awaiter(void 0, void 0, void 0, function*
 });
 exports.incomeCategory = incomeCategory;
 exports.updateIncome = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log("🔹 Incoming request:", req.body);
-    console.log("🔹 Params:", req.params);
-    console.log("🔹 User:", req.user);
     if (!req.user || !req.user.userId)
         return res.status(401).json({ message: "Error Identifying Token" });
     const userId = req.user.userId;
@@ -88,11 +85,9 @@ exports.updateIncome = (req, res) => __awaiter(void 0, void 0, void 0, function*
     });
     if (!isValid)
         return res.status(400).json({ message: "Forbidden: User not found" });
-    console.log("🔹 Validating request body...");
     const updateIncomeSchema = incomeValidation_1.incomeSchema.partial();
     const parsed = updateIncomeSchema.safeParse(req.body);
     if (!parsed.success) {
-        console.log("parsing error", parsed.error);
         return res.status(400).json({ message: "Wrong data" });
     }
     if (Object.keys(parsed.data).length === 0) {
