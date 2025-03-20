@@ -89,7 +89,9 @@ exports.updateIncome = async (req: AuthenticatedRequest, res: Response) => {
     if (!isValid) return res.status(400).json({ message: "Forbidden: User not found" });
     const updateIncomeSchema = incomeSchema.partial();
     const parsed = updateIncomeSchema.safeParse(req.body);
-    if (!parsed.success) return res.status(400).json({ message: "Wrong data" });
+    if (!parsed.success){
+         return res.status(400).json({ message: "Wrong data" });
+        }
     if (Object.keys(parsed.data).length === 0) {
         return res.status(400).json({ message: "No data found to be updated" })
     }
@@ -104,7 +106,7 @@ exports.updateIncome = async (req: AuthenticatedRequest, res: Response) => {
         res.status(200).json({ message: "Updated Successfully", updatedIncome });
     }
     catch (error) {
-        res.status(400).json({ message: "Server Error" })
+        res.status(400).json({ message: "Server Error", error })
     }
 
 }

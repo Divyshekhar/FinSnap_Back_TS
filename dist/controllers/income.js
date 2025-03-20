@@ -74,6 +74,9 @@ const incomeCategory = (req, res) => __awaiter(void 0, void 0, void 0, function*
 });
 exports.incomeCategory = incomeCategory;
 exports.updateIncome = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log("🔹 Incoming request:", req.body);
+    console.log("🔹 Params:", req.params);
+    console.log("🔹 User:", req.user);
     if (!req.user || !req.user.userId)
         return res.status(401).json({ message: "Error Identifying Token" });
     const userId = req.user.userId;
@@ -85,10 +88,13 @@ exports.updateIncome = (req, res) => __awaiter(void 0, void 0, void 0, function*
     });
     if (!isValid)
         return res.status(400).json({ message: "Forbidden: User not found" });
+    console.log("🔹 Validating request body...");
     const updateIncomeSchema = incomeValidation_1.incomeSchema.partial();
     const parsed = updateIncomeSchema.safeParse(req.body);
-    if (!parsed.success)
+    if (!parsed.success) {
+        console.log("parsing error", parsed.error);
         return res.status(400).json({ message: "Wrong data" });
+    }
     if (Object.keys(parsed.data).length === 0) {
         return res.status(400).json({ message: "No data found to be updated" });
     }
@@ -103,7 +109,7 @@ exports.updateIncome = (req, res) => __awaiter(void 0, void 0, void 0, function*
         res.status(200).json({ message: "Updated Successfully", updatedIncome });
     }
     catch (error) {
-        res.status(400).json({ message: "Server Error" });
+        res.status(400).json({ message: "Server Error", error });
     }
 });
 exports.deleteIncome = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
