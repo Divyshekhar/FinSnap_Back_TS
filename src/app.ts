@@ -8,6 +8,7 @@ const PORT = process.env.PORT || 5000;
 app.use(express.json());
 app.use(cors({
     origin: "https://finsnap.vercel.app"
+    // origin: "http://localhost:3000"
 }
 ));
 
